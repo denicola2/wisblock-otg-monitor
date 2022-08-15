@@ -175,17 +175,17 @@ void renogyPollRs232(void)
 void renogyPrintStatus(void)
 {
   MYLOG("RS232","====== Renogy Status: =====");
-  MYLOG("RS232","Panel Voltage:\t\t%d.%d V\n", g_renogy_data.panel_voltage_1, g_renogy_data.panel_voltage_2);
-  MYLOG("RS232","Panel Current:\t\t%d.%d A\n", g_renogy_data.panel_current_1, g_renogy_data.panel_current_2);
-  MYLOG("RS232","Panel Power:\t\t%d.%d W\n", g_renogy_data.panel_power_1, g_renogy_data.panel_power_2);
-  MYLOG("RS232","Battery Voltage:\t\t%d.%d V\n", g_renogy_data.batt_voltage_1, g_renogy_data.batt_voltage_2);
-  MYLOG("RS232","Battery Current:\t\t%d.%d A\n", g_renogy_data.batt_current_1, g_renogy_data.batt_current_2);
-  MYLOG("RS232","Battery Percent:\t\t%d.%d %\n", g_renogy_data.batt_percent_1, g_renogy_data.batt_percent_2);
-  MYLOG("RS232","Load Voltage:\t\t%d.%d V\n", g_renogy_data.load_voltage_1, g_renogy_data.load_voltage_2);
-  MYLOG("RS232","Load Current:\t\t%d.%d A\n", g_renogy_data.load_current_1, g_renogy_data.load_current_2);
-  MYLOG("RS232","Load Power:\t\t%d.%d W\n", g_renogy_data.load_power_1, g_renogy_data.load_power_2);
-  MYLOG("RS232","Load Status:\t\t%d\n", (g_renogy_data.load_status_1 << 8) | g_renogy_data.load_status_2);
-  MYLOG("RS232","Error Status:\t\t%02X%02X\n\n", g_renogy_data.error_status_1, g_renogy_data.error_status_2);
+  MYLOG("RS232","Panel Voltage: %d.%d V", g_renogy_data.panel_voltage_1, g_renogy_data.panel_voltage_2);
+  MYLOG("RS232","Panel Current: %d.%d A", g_renogy_data.panel_current_1, g_renogy_data.panel_current_2);
+  MYLOG("RS232","Panel Power: %d.%d W", g_renogy_data.panel_power_1, g_renogy_data.panel_power_2);
+  MYLOG("RS232","Battery Voltage: %d.%d V", g_renogy_data.batt_voltage_1, g_renogy_data.batt_voltage_2);
+  MYLOG("RS232","Battery Current: %d.%d A", g_renogy_data.batt_current_1, g_renogy_data.batt_current_2);
+  MYLOG("RS232","Battery Percent: %d.%d %", g_renogy_data.batt_percent_1, g_renogy_data.batt_percent_2);
+  MYLOG("RS232","Load Voltage: %d.%d V", g_renogy_data.load_voltage_1, g_renogy_data.load_voltage_2);
+  MYLOG("RS232","Load Current: %d.%d A", g_renogy_data.load_current_1, g_renogy_data.load_current_2);
+  MYLOG("RS232","Load Power: %d.%d W", g_renogy_data.load_power_1, g_renogy_data.load_power_2);
+  MYLOG("RS232","Load Status: %d", (g_renogy_data.load_status_1 << 8) | g_renogy_data.load_status_2);
+  MYLOG("RS232","Error Status: %02X%02X", g_renogy_data.error_status_1, g_renogy_data.error_status_2);
 }
 
 /* 
@@ -228,8 +228,8 @@ const char *renogyErrorCodes[] = {
 const char *renogyDecodeErrorStatus(void)
 {
 #if MY_DEBUG == 1
-    Serial.printf("error_status_1 = 0x%02X\n", g_renogy_data.error_status_1);
-    Serial.printf("error_status_2 = 0x%02X\n", g_renogy_data.error_status_2);
+    MYLOG("RS232", "error_status_1 = 0x%02X", g_renogy_data.error_status_1);
+    MYLOG("RS232", "error_status_2 = 0x%02X", g_renogy_data.error_status_2);
 #endif 
 
     if(g_renogy_data.error_status_2 > RENOGY_MAX_ERROR_CODE)

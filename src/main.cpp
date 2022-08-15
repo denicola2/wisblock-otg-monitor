@@ -31,19 +31,6 @@ TimerEvent_t delayed_sending;
 #define SW_VERSION_2 0 // minor version increase on API change / backward compatible
 #define SW_VERSION_3 0 // patch version increase on bugfix, no affect on API
 
-/**
-   Optional hard-coded LoRaWAN credentials for OTAA and ABP.
-   It is strongly recommended to avoid duplicated node credentials
-   Options to setup credentials are
-   - over USB with AT commands
-   - over BLE with My nRF52 Toolbox
-*/
-uint8_t node_device_eui[8] = {0x00, 0x0D, 0x75, 0xE6, 0x56, 0x4D, 0xC1, 0xF3};
-uint8_t node_app_eui[8] = {0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x01, 0xE1};
-uint8_t node_app_key[16] = {0x2B, 0x84, 0xE0, 0xB0, 0x9B, 0x68, 0xE5, 0xCB, 0x42, 0x17, 0x6F, 0xE7, 0x53, 0xDC, 0xEE, 0x79};
-uint8_t node_nws_key[16] = {0x32, 0x3D, 0x15, 0x5A, 0x00, 0x0D, 0xF3, 0x35, 0x30, 0x7A, 0x16, 0xDA, 0x0C, 0x9D, 0xF5, 0x3F};
-uint8_t node_apps_key[16] = {0x3F, 0x6A, 0x66, 0x45, 0x9D, 0x5E, 0xDC, 0xA6, 0x3C, 0xBC, 0x46, 0x19, 0xCD, 0x61, 0xA1, 0x1E};
-
 /** Application function definitions */
 void setup_app(void);
 bool init_app(void);
@@ -215,7 +202,7 @@ bool init_app(void)
 	// Initialize Serial (for RS232 to Renogy)
 	MYLOG("APP", "Initialize Serial1 for RS232 to Renogy");
 	init_renogy_rs232();
-	MYLOG("APP", "Result %s\n", Serial1 ? "success" : "failed");
+	MYLOG("APP", "Result %s", Serial1 ? "success" : "failed");
 	//Serial1.write("Hello to renogy!");
 #endif
 	if (g_lorawan_settings.send_repeat_time != 0)
@@ -300,6 +287,7 @@ void app_event_handler(void)
 
 			uint8_t *packet = (uint8_t *)&g_tracker_data;
 #if MY_DEBUG == 1
+			Serial.println("Packet 1 prepared for uplink:");
 			for (int idx = 0; idx < (int)TRACKER_DATA_LEN; idx++)
 			{
 				Serial.printf("%02X", packet[idx]);
@@ -334,6 +322,7 @@ void app_event_handler(void)
 #endif
 				packet = (uint8_t *)&g_renogy_data;
 #if MY_DEBUG == 1
+                Serial.println("Packet 2 prepared for uplink:");
 				for (int idx = 0; idx < (int)RENOGY_DATA_LEN; idx++)
 				{
 					Serial.printf("%02X", packet[idx]);

@@ -46,11 +46,11 @@
 		if (tag)                            \
 			PRINTF("[%s] ", tag);           \
 		PRINTF(__VA_ARGS__);                \
-		PRINTF("\r\n");                     \
+		PRINTF("\n");                       \
 		if (g_ble_uart_is_connected)        \
 		{                                   \
 			g_ble_uart.printf(__VA_ARGS__); \
-			g_ble_uart.printf("\r\n");      \
+			g_ble_uart.printf("\n");        \
 		}                                   \
 	} while (0)
 #else
