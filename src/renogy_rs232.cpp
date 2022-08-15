@@ -106,6 +106,8 @@ static byte * querySlave( byte b[], int sizeOfArray ) {
     counter++;
   }
 
+  MYLOG("RS232", "Read %d bytes from Renogy: 0x%X.", counter, recvd_data);
+
   return recvd_data;
 }
 
@@ -125,7 +127,7 @@ void renogyPollRs232(void)
     // Sends 9 basic metrics out for each of the nine below functions
     func_out = querySlave(panel_voltage_msg, sizeof(panel_voltage_msg));
     g_renogy_data.panel_voltage_1 = func_out[3];
-    g_renogy_data.panel_voltage_1 = func_out[4];
+    g_renogy_data.panel_voltage_2 = func_out[4];
 
     func_out = querySlave(panel_current_msg, sizeof(panel_current_msg));
     g_renogy_data.panel_current_1 = func_out[3];
@@ -174,7 +176,7 @@ void renogyPollRs232(void)
 
 void renogyPrintStatus(void)
 {
-  MYLOG("RS232","====== Renogy Status: =====");
+  MYLOG("RS232","====== Renogy Status: ======");
   MYLOG("RS232","Panel Voltage: %d.%d V", g_renogy_data.panel_voltage_1, g_renogy_data.panel_voltage_2);
   MYLOG("RS232","Panel Current: %d.%d A", g_renogy_data.panel_current_1, g_renogy_data.panel_current_2);
   MYLOG("RS232","Panel Power: %d.%d W", g_renogy_data.panel_power_1, g_renogy_data.panel_power_2);
