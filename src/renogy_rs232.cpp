@@ -1,10 +1,9 @@
-/* Reference: https://github.com/1Ghasthunter1/Helium_RMS */
+/* Reference: https://github.com/mickwheelz/NodeRenogy/blob/main/renogy.js
 /*
     For use with Renogy Wanderer. Other Renogy charge controllers may be supported, but are untested
     A system to communicate with Renogy solar charge controllers often used in Off-Grid Helium Hotspots.
     - Battery, solar, and load statistics
     - Error code monitoring
-    - Remote load control
 
     The controller sends out data requests via the built-in RS232 RJ12 port on the Renogy controller 
     and receives information like solar charge, load status, and error messages

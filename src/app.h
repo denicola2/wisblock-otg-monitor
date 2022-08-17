@@ -103,6 +103,25 @@ void renogyPrintStatus(void);
 /** Include the WisBlock-API */
 #include <WisBlock-API.h> // Click to install library: http://librarymanager/All#WisBlock-API
 
+/** Battery level uinion */
+typedef union 
+{
+	uint16_t batt16 = 0;
+	uint8_t batt8[2];
+} batt_s;
+/** Latitude/Longitude value union */
+typedef union
+{
+	uint32_t val32;
+	uint8_t val8[4];
+} latLong_s;
+/** Renogy value union */
+typedef union 
+{
+	uint16_t val16;
+	uint8_t val8[2];
+} renogy_s;
+
 struct tracker_data_s
 {
 #ifdef ENABLE_GNSS
@@ -172,24 +191,5 @@ struct renogy_data_s
 extern renogy_data_s g_renogy_data;
 #define RENOGY_DATA_LEN sizeof(renogy_data_s)
 #endif // ENABLE_RS232
-
-/** Battery level uinion */
-union batt_s
-{
-	uint16_t batt16 = 0;
-	uint8_t batt8[2];
-};
-/** Latitude/Longitude value union */
-union latLong_s
-{
-	uint32_t val32;
-	uint8_t val8[4];
-};
-/** Renogy value union */
-union renogy_s 
-{
-	uint16_t val16;
-	uint8_t val8[2];
-};
 
 #endif
