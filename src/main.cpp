@@ -331,6 +331,9 @@ void app_event_handler(void)
 #endif
 				MYLOG("RS232", "Renogy Error Status: %s", renogyDecodeErrorStatus());
 
+				// Allow first uplink to complete sending
+				delay(1);
+
 				// Sending second uplink data: Renogy Solar Charge Controller readings
 				result = send_lora_packet((uint8_t *)&g_renogy_data, RENOGY_DATA_LEN);
 				switch (result)

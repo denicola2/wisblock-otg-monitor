@@ -102,6 +102,26 @@ void renogyPrintStatus(void);
 /** Include the WisBlock-API */
 #include <WisBlock-API.h> // Click to install library: http://librarymanager/All#WisBlock-API
 
+/** Battery level uinion */
+typedef union 
+{
+	uint16_t batt16 = 0;
+	uint8_t batt8[2];
+} batt_s;
+/** Latitude/Longitude value union */
+typedef union latLong_s
+{
+	uint32_t val32;
+	uint8_t val8[4];
+} latLong_s;
+/** Renogy value union */
+typedef union
+{
+	uint16_t val16;
+	uint8_t val8[2];
+} renogy_s ;
+
+
 struct tracker_data_s
 {
 #ifdef ENABLE_GNSS
@@ -142,53 +162,23 @@ struct renogy_data_s
 #ifdef ENABLE_RS232
 	uint8_t data_flag1 = 0x0C;   // 1
 	uint8_t data_flag2 = 0x02;   // 2
-	uint8_t panel_voltage_1 = 0; // 3
-	uint8_t panel_voltage_2 = 0; // 4
-	uint8_t panel_current_1 = 0; // 5
-	uint8_t panel_current_2 = 0; // 6
-	uint8_t panel_power_1 = 0;   // 7
-	uint8_t panel_power_2 = 0;   // 8
-	uint8_t batt_voltage_1 = 0;  // 9
-	uint8_t batt_voltage_2 = 0;  // 10
-	uint8_t batt_current_1 = 0;  // 11
-	uint8_t batt_current_2 = 0;  // 12
-	uint8_t batt_percent_1 = 0;  // 13
-	uint8_t batt_percent_2 = 0;  // 14
-	uint8_t load_voltage_1 = 0;  // 15
-	uint8_t load_voltage_2 = 0;  // 16
-	uint8_t load_current_1 = 0;  // 17
-	uint8_t load_current_2 = 0;  // 18
-	uint8_t load_power_1 = 0;    // 19
-	uint8_t load_power_2 = 0;    // 20
-	uint8_t load_status_1 = 0;   // 21
-	uint8_t load_status_2 = 0;   // 22
-	uint8_t error_status_1 = 0;  // 23
-	uint8_t error_status_2 = 0;  // 24
-	uint8_t recvd_downlink = 0;  // 25
+	renogy_s panel_voltage; // 3
+	renogy_s panel_current; // 5
+	renogy_s panel_power;   // 7
+	renogy_s batt_voltage;  // 9
+	renogy_s batt_current;  // 11
+	renogy_s batt_percent;  // 13
+	renogy_s load_voltage;  // 15
+	renogy_s load_current;  // 17
+	renogy_s load_power;    // 19
+	renogy_s load_status;   // 21
+	renogy_s error_status;  // 23
+	uint8_t recvd_downlink;  // 25
 #endif
 };
 
 extern renogy_data_s g_renogy_data;
 #define RENOGY_DATA_LEN sizeof(renogy_data_s)
 #endif // ENABLE_RS232
-
-/** Battery level uinion */
-union batt_s
-{
-	uint16_t batt16 = 0;
-	uint8_t batt8[2];
-};
-/** Latitude/Longitude value union */
-union latLong_s
-{
-	uint32_t val32;
-	uint8_t val8[4];
-};
-/** Renogy value union */
-union renogy_s 
-{
-	uint16_t val16;
-	uint8_t val8[2];
-};
 
 #endif
