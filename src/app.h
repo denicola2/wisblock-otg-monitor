@@ -94,7 +94,8 @@ bool poll_gnss(void);
 
 /** Renogy RS232 functions **/
 void init_renogy_rs232(void);
-void renogyPollRs232(void);
+void renogyPollRs232Data(void);
+void renogyPollRs232Errors(void);
 const char *renogyDecodeErrorStatus(void);
 void renogyPrintStatus(void);
 
@@ -136,36 +137,36 @@ extern tracker_data_s g_tracker_data;
 #define TRACKER_DATA_LEN sizeof(tracker_data_s)
 
 #ifdef ENABLE_RS232
+const uint8_t dataStartRegister = 0x100;
+const int numDataRegisters = 30;
+const uint8_t infoStartRegister = 0x00A;
+const int numInfomRegisters = 17;
 
+//https://github.com/mickwheelz/NodeRenogy/blob/main/renogy.js
 struct renogy_data_s
 {
-#ifdef ENABLE_RS232
 	uint8_t data_flag1 = 0x0C;   // 1
 	uint8_t data_flag2 = 0x02;   // 2
-	uint8_t panel_voltage_1 = 0; // 3
-	uint8_t panel_voltage_2 = 0; // 4
-	uint8_t panel_current_1 = 0; // 5
-	uint8_t panel_current_2 = 0; // 6
-	uint8_t panel_power_1 = 0;   // 7
-	uint8_t panel_power_2 = 0;   // 8
-	uint8_t batt_voltage_1 = 0;  // 9
-	uint8_t batt_voltage_2 = 0;  // 10
-	uint8_t batt_current_1 = 0;  // 11
-	uint8_t batt_current_2 = 0;  // 12
-	uint8_t batt_percent_1 = 0;  // 13
-	uint8_t batt_percent_2 = 0;  // 14
-	uint8_t load_voltage_1 = 0;  // 15
-	uint8_t load_voltage_2 = 0;  // 16
-	uint8_t load_current_1 = 0;  // 17
-	uint8_t load_current_2 = 0;  // 18
-	uint8_t load_power_1 = 0;    // 19
-	uint8_t load_power_2 = 0;    // 20
-	uint8_t load_status_1 = 0;   // 21
-	uint8_t load_status_2 = 0;   // 22
-	uint8_t error_status_1 = 0;  // 23
-	uint8_t error_status_2 = 0;  // 24
-	uint8_t recvd_downlink = 0;  // 25
-#endif
+	renogy_s batt_capacity;      // 3
+	renogy_s batt_voltage;       // 5
+	renogy_s batt_charge_current;// 7
+	renogy_s temp;               // 9 - battTemp[0] & controllerTemp[1]
+	renogy_s load_voltage;		 // 11
+	renogy_s load_current;	 	 // 13
+	renogy_s load_power;		 // 15
+	renogy_s panel_voltage;		 // 17
+	renogy_s panel_current;		 // 19
+	renogy_s panel_power;		 // 21
+	renogy_s error_status_1;     // 23
+	renogy_s error_status_2;	 // 25
+/* Too much info
+	renogy_s min_bat_v_today;	 // 23
+	renogy_s max_bat_v_today;	 // 25
+	renogy_s max_charge_current_today;
+	renogy_s max_discharge_current_today;
+	renogy_s max_charge_power_today;
+	renogy_s max_discharge_power_today;
+*/
 };
 
 extern renogy_data_s g_renogy_data;

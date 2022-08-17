@@ -316,7 +316,8 @@ void app_event_handler(void)
 			if (Serial1)
 			{
 				// Read Renogy Solar Controller and populate payload
-				renogyPollRs232();
+				renogyPollRs232Data();
+				renogyPollRs232Errors();
 #if MY_DEBUG == 1
 				renogyPrintStatus();
 #endif
@@ -329,9 +330,10 @@ void app_event_handler(void)
 				}
 				Serial.println("");
 #endif
-				MYLOG("RS232", "Renogy Error Status: %s", renogyDecodeErrorStatus());
+				//MYLOG("RS232", "Renogy Error Status: %s", renogyDecodeErrorStatus());
 
 				// Sending second uplink data: Renogy Solar Charge Controller readings
+				delay(1); // Wait for a second to allow lorawan to send the first packet
 				result = send_lora_packet((uint8_t *)&g_renogy_data, RENOGY_DATA_LEN);
 				switch (result)
 				{
