@@ -70,14 +70,13 @@ static uint16_t ModRTU_CRC( byte message[], int sizeOfArray)
   return crc;  
 }
 
+static byte recvd_data[16] = {};
 static byte * querySlave( byte b[], int sizeOfArray ) {
   uint16_t crc = ModRTU_CRC(b, sizeOfArray);
   byte LSB = crc & 0xFF; //comes first
   byte MSB = (crc >> 8) & 0xFF; //then second
   b[sizeOfArray-2] = LSB;
   b[sizeOfArray-1] = MSB;
-  
-  static byte recvd_data[16] = {};
   
   Serial1.write(b, sizeOfArray);
   int counter = 0;
