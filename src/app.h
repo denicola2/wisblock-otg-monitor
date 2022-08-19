@@ -34,6 +34,9 @@
 // Enable RS232 Renogy sections
 #define ENABLE_RS232 
 
+// Enable LoRaWAN Uplinks
+//#define ENABLE_UPLINK
+
 /** Examples for application events */
 #define ACC_TRIGGER 0b1000000000000000
 #define N_ACC_TRIGGER 0b0111111111111111

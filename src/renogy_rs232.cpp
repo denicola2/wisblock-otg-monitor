@@ -10,6 +10,12 @@
     and receives information like solar charge, load status, and error messages
 
     Interfacing provided by Serial1 via the MIKROE-1582 RS232 Click module via the RAK1920 adapter
+
+    RJ12   <---> DB9M RS232 pin mapping
+    P1(TX) <---> P3 (TX)
+    P2(RX) <---> P2 (RX)
+    P3(GND)<---> P5 (GND)
+
 */
 
 #include "Arduino.h"
@@ -91,7 +97,14 @@ static byte * querySlave( byte b[], int sizeOfArray ) {
     counter++;
   }
 
-  MYLOG("RS232", "Read %d bytes from Renogy: 0x%X.", counter, recvd_data);
+#if MY_DEBUG == 1
+  MYLOG("RS232", "Read %d bytes from Renogy", counter);
+  int i;
+  for(i = 0; i < counter; i++)
+  {
+    MYLOG("RS232","[%d] %02X", i, recvd_data[i]);
+  }
+#endif
 
   return recvd_data;
 }

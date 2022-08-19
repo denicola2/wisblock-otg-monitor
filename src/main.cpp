@@ -239,6 +239,8 @@ bool init_app(void)
 */
 void app_event_handler(void)
 {
+	static bool nextUplink = 0;
+
 	// Timer triggered event
 	if ((g_task_event_type & STATUS) == STATUS)
 	{
@@ -258,88 +260,51 @@ void app_event_handler(void)
 		}
 		else
 		{
+			if (!nextUplink)
+			{
 #ifdef ENABLE_GNSS
-			// Check location and populate payload
-			if (poll_gnss())
-			{
-				MYLOG("APP", "Valid GNSS position");
-			}
-			else
-			{
-				MYLOG("APP", "No valid GNSS position");
-			}
+				// Check location and populate payload
+				if (poll_gnss())
+				{
+					MYLOG("APP", "Valid GNSS position");
+				}
+				else
+				{
+					MYLOG("APP", "No valid GNSS position");
+				}
 #endif
 #ifdef ENABLE_ENV_MON
-			// Read temp & humi data and populate payload
-			shtc3_read_data();
+				// Read temp & humi data and populate payload
+				shtc3_read_data();
 #endif
-			// Get battery level
-			// g_tracker_data.batt = mv_to_percent(read_batt());
-			batt_level.batt16 = read_batt() / 10;
-			g_tracker_data.batt_1 = batt_level.batt8[1];
-			g_tracker_data.batt_2 = batt_level.batt8[0];	
+				// Get battery level
+				// g_tracker_data.batt = mv_to_percent(read_batt());
+				batt_level.batt16 = read_batt() / 10;
+				g_tracker_data.batt_1 = batt_level.batt8[1];
+				g_tracker_data.batt_2 = batt_level.batt8[0];
 
-			// Remember last time sending
-			last_pos_send = millis();
+				// Remember last time sending
+				last_pos_send = millis();
 
-			// Just in case
-			delayed_active = false;	
+				// Just in case
+				delayed_active = false;
 
-			uint8_t *packet = (uint8_t *)&g_tracker_data;
+				uint8_t *packet = (uint8_t *)&g_tracker_data;
 #if MY_DEBUG == 1
-			Serial.println("Packet 1 prepared for uplink:");
-			for (int idx = 0; idx < (int)TRACKER_DATA_LEN; idx++)
-			{
-				Serial.printf("%02X", packet[idx]);
-			}
-			Serial.println("");
-#endif
-
-			//Sending first uplink data: Battery, GNSS, ENV data
-			lmh_error_status result = send_lora_packet((uint8_t *)&g_tracker_data, TRACKER_DATA_LEN);
-			switch (result)
-			{
-			case LMH_SUCCESS:
-				MYLOG("APP", "Packet 1 enqueued");
-				// Set a flag that TX cycle is running
-				lora_busy = true;
-				break;
-			case LMH_BUSY:
-				MYLOG("APP", "LoRa transceiver is busy");
-				break;
-			case LMH_ERROR:
-				MYLOG("APP", "Packet 1 error, too big to send with current DR");
-				break;
-			}
-
-#ifdef ENABLE_RS232
-			if (Serial1)
-			{
-				// Read Renogy Solar Controller and populate payload
-				renogyPollRs232();
-#if MY_DEBUG == 1
-				renogyPrintStatus();
-#endif
-				packet = (uint8_t *)&g_renogy_data;
-#if MY_DEBUG == 1
-                Serial.println("Packet 2 prepared for uplink:");
-				for (int idx = 0; idx < (int)RENOGY_DATA_LEN; idx++)
+				Serial.println("Packet 1 prepared for uplink:");
+				for (int idx = 0; idx < (int)TRACKER_DATA_LEN; idx++)
 				{
 					Serial.printf("%02X", packet[idx]);
 				}
 				Serial.println("");
 #endif
-				MYLOG("RS232", "Renogy Error Status: %s", renogyDecodeErrorStatus());
-
-				// Allow first uplink to complete sending
-				delay(1);
-
-				// Sending second uplink data: Renogy Solar Charge Controller readings
-				result = send_lora_packet((uint8_t *)&g_renogy_data, RENOGY_DATA_LEN);
+#ifdef ENABLE_UPLINK
+				// Sending first uplink data: Battery, GNSS, ENV data
+				lmh_error_status result = send_lora_packet((uint8_t *)&g_tracker_data, TRACKER_DATA_LEN);
 				switch (result)
 				{
 				case LMH_SUCCESS:
-					MYLOG("APP", "Packet 2 enqueued");
+					MYLOG("APP", "Packet 1 enqueued");
 					// Set a flag that TX cycle is running
 					lora_busy = true;
 					break;
@@ -347,14 +312,56 @@ void app_event_handler(void)
 					MYLOG("APP", "LoRa transceiver is busy");
 					break;
 				case LMH_ERROR:
-					MYLOG("APP", "Packet 2 error, too big to send with current DR");
+					MYLOG("APP", "Packet 1 error, too big to send with current DR");
 					break;
 				}
+#endif // ENABLE_UPLINK
 			}
+#ifdef ENABLE_RS232
 			else
 			{
-				MYLOG("RS232", "RS232 interface not initialized, skipping Renogy Poll Cycle");
+				if (Serial1)
+				{
+					// Read Renogy Solar Controller and populate payload
+					renogyPollRs232();
+#if MY_DEBUG == 1
+					renogyPrintStatus();
+#endif
+					uint8_t *packet = (uint8_t *)&g_renogy_data;
+#if MY_DEBUG == 1
+					Serial.println("Packet 2 prepared for uplink:");
+					for (int idx = 0; idx < (int)RENOGY_DATA_LEN; idx++)
+					{
+						Serial.printf("%02X", packet[idx]);
+					}
+					Serial.println("");
+#endif
+					MYLOG("RS232", "Renogy Error Status: %s", renogyDecodeErrorStatus());
+#ifdef ENABLE_UPLINK
+					// Sending second uplink data: Renogy Solar Charge Controller readings
+					lmh_error_status result = send_lora_packet((uint8_t *)&g_renogy_data, RENOGY_DATA_LEN);
+					switch (result)
+					{
+					case LMH_SUCCESS:
+						MYLOG("APP", "Packet 2 enqueued");
+						// Set a flag that TX cycle is running
+						lora_busy = true;
+						break;
+					case LMH_BUSY:
+						MYLOG("APP", "LoRa transceiver is busy");
+						break;
+					case LMH_ERROR:
+						MYLOG("APP", "Packet 2 error, too big to send with current DR");
+						break;
+					}
+#endif // ENABLE_UPLINK
+				}
+				else
+				{
+					MYLOG("RS232", "RS232 interface not initialized, skipping Renogy Poll Cycle");
+				}
 			}
+			nextUplink = !nextUplink;
 #endif // RS232_ENABLED
 		}
 	}
