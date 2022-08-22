@@ -203,7 +203,6 @@ bool init_app(void)
 	MYLOG("APP", "Initialize Serial1 for RS232 to Renogy");
 	init_renogy_rs232();
 	MYLOG("APP", "Result %s", Serial1 ? "success" : "failed");
-	//Serial1.write("Hello to renogy!");
 #endif
 	if (g_lorawan_settings.send_repeat_time != 0)
 	{
