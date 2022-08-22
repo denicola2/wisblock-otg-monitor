@@ -179,9 +179,6 @@ bool init_app(void)
 	bool init_result = true;
 	MYLOG("APP", "init_app");
 
-	pinMode(WB_IO2, OUTPUT);
-	digitalWrite(WB_IO2, HIGH);
-
 	// Start the I2C bus
 	Wire.begin();
 	Wire.setClock(400000);

@@ -53,6 +53,9 @@ void init_renogy_rs232(void)
 #ifdef ENABLE_RS232_5V
   pinMode(WB_IO5, OUTPUT);
   digitalWrite(WB_IO5, HIGH);
+#else
+  pinMode(WB_IO2, OUTPUT);
+  digitalWrite(WB_IO2, HIGH);
 #endif
   Serial1.begin(9600);
 }
